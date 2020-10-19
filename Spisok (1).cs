@@ -251,26 +251,6 @@ namespace Spisok
             }
             return false;
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         //СОРТИРОВКА СПИСКА
         public void Sort()
         {
@@ -319,15 +299,6 @@ namespace Spisok
                     Clear();
             }
         }
-
-
-
-
-
-
-
-
-
 
     }
 
