@@ -1,0 +1,27 @@
+public static bool CheckBracket(string str)
+        {
+            var bracketstr = "()[]{}<>";
+            // стек открытых скобок
+            Stack_<int> stack = new Stack_<int>();
+            for (var i = 0; i < str.Length; ++i)
+            {
+                char ch = str[i]; // текущий символ
+                int ind = bracketstr.IndexOf(ch);// ищем символ в скобках
+                // если скобка найдена
+                if (ind >= 0)
+                {
+                    // проверяем, какая это скобка // на четность
+                    if (ind % 2==1)
+                    {
+                        //если стек пустой не сбалансированная
+                        if (stack.Empty()) return false;
+                        // ИНАЧЕ извлекаем последнюю открытую скобку из стека
+                        var last_bracket = stack.Pop();
+                        // если она не соответствует закрывающей скобке 
+                        if (last_bracket != bracketstr[ind - 1]) return false;
+                    }
+                    else stack.Push(ch);
+                }
+            }
+            return stack.Empty();
+        }
