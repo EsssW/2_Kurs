@@ -1,0 +1,329 @@
+class TElement
+    {
+        int x;
+        TElement left, right;
+        public TElement(int k)
+        {
+            x = k; left = null; right = null;
+        }
+        public int X
+        {
+            get { return x; }
+            set { x = value; }
+        }
+        public TElement Left
+        {
+            get { return left; }
+            set { left = value; }
+        }
+        public TElement Right
+        {
+            get { return right; }
+            set { right = value; }
+        }
+    }
+    class Tree
+    {
+        public TElement root;
+        public Tree() { root = null; }
+        public void AddElement(int k)
+        {
+            // если корень пустой, корнем делаем наш элмент
+            if (root == null) { root = new TElement(k); return; }
+            // ИНАЧЕ
+            // переменная для сохранени корня дерева
+            TElement p = root;
+            while (true)
+            {
+                if (p.X > k) // если корень больше нашего элмента
+                    if (p.Left != null)
+                        p = p.Left; // если левая ветка существует(есть эл с лева) то переходим к след левому эл
+                    else // инчае если слева нет элмента
+                    {
+                        p.Left = new TElement(k); return;
+                    }
+                else // если корень меньше  элмента идем в  правую часть
+                    if (p.Right != null) p = p.Right; // если элемнт справа сущ то присв наш элмент
+                // инчае создаем правый лист
+                else { p.Right = new TElement(k); return; }
+            }
+        }
+        public TElement GetMax()
+        {
+            TElement t = root;
+            TElement maxvalue;
+            while (t.Right != null)
+            {
+                maxvalue = t;
+                t = t.Right;
+            }
+            return t;
+        }
+        public TElement GetMin()
+        {
+            TElement t = root;
+            TElement minvalue;
+            while (t.Left != null)
+            {
+                minvalue = t;
+                t = t.Left;
+            }
+            return t;
+        }
+
+        public int countLeaves(TElement root)
+        {
+            if (root == null)
+                return 0;
+            if (root.Left == null && root.Right == null)
+                return 1;
+            return countLeaves(root.Left) + countLeaves(root.Right);
+        }
+
+        public int countLevels()
+        {
+            return 0;
+        }
+        // подсчет количества элементов с заданным значением
+        public int countElement(int k) { return 0; }
+        public void sumElements(TElement t, ref int sum)
+        {
+            if (t == null)
+                return;
+
+            sum += t.X;
+            sumElements(t.Left, ref sum);
+            sumElements(t.Right, ref sum);
+        }
+        public void Remove(int k)
+        {
+            TElement p = root;
+            TElement l = root;
+            TElement prev = root;
+            if (root == null) return;
+            if (root.X == k)
+            {
+                if (p.Left == null && p.Right == null) { root = null; return; }
+                if (p.Right == null) { root = root.Left; return; }
+                if (p.Left == null) { root = root.Right; return; }
+
+                l = root.Left;
+                root = root.Right; // корнем стало правое поддерево
+                for (p = root; p.Left != null; p = p.Left) ; // идем влево в правом поддереве
+                p.Left = l; // в левый конец правого поддерева добовляем лоснвоное левое поддерево от начального кокрня
+                prev.Left = prev.Right = null;
+                return;
+            }
+            else
+            {
+                while (p != null)
+                {
+                    // идем в лево
+                    if (p.X > k) { prev = p; p = p.Left; }
+                    else
+                        // идем вправо
+                        if (p.X < k) { prev = p; p = p.Right; }
+                    else
+                    {
+                        if (prev.X > k)
+                        {
+                            l = p.Left;
+                            // если нет левого поддерева
+                            if (p.Left == null)
+                            {
+                                prev.Left = l;
+                                return;
+                            }
+                            //ecли есть левое поддерево
+                            else
+                                // но нет правого поддрева
+                                if (p.Right == null)
+                            {
+                                prev.Left = p.Right; return;
+                            }
+                            // если есть оба поддерева
+                            else
+                            {
+                                //
+                                prev.Left = p.Right;
+                                // в правом поддреве идем до самого левого листа
+                                for (p = p.Right; p.Left != null; p = p.Left) ;
+                                p.Left = l;
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            l = p.Left;
+                            if (p.Left == null)
+                            {
+                                prev.Right = p.Left;
+                                return;
+                            }
+                            //ecли есть левое поддерево
+                            else
+                            {
+                                // но нет правого поддрева
+                                if (p.Right == null)
+                                {
+                                    prev.Right = p.Right; return;
+                                }
+                                else
+                                {
+                                    prev.Right = p.Right;
+                                    // в правом поддреве идем до самого левого листа
+                                    for (p = p.Right; p.Left != null; p = p.Left) ;
+                                    p.Left = l;
+                                    return;
+                                }
+                            }
+                        }
+
+                    }
+                }
+
+            }
+        }
+        public TElement Find(int k)
+        {
+            bool isFound = false;
+            TElement current = root;
+            while (current != null && isFound == false)
+            {
+                if (current.X == k) isFound = true;
+
+                if (k < current.X)
+                {
+                    if (current.Left == null) break;
+                    else
+                        current = current.Left;
+                }
+                if (k > current.X)
+                {
+                    if (current.Right == null)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        current = current.Right;
+                    }
+                }
+            }
+            if (isFound == true) return current;
+            else return current;
+
+        }
+        public Tree Copy()
+        {
+            Stack<TElement> stack1 = new Stack<TElement>();
+            Stack<TElement> stack2 = new Stack<TElement>();
+
+            Tree t = new Tree();
+            TElement p = root, temp = null;
+            t.AddElement(p.X);// добавляем корень дерева из копируемого дерева
+            // если есть левый эл дбавялем в 1 стек
+            if (p.Left != null)
+                stack1.Push(p.Left);
+            // если есть правый эл дбавялем в 1 стек
+            if (p.Right != null)
+                stack1.Push(p.Right);
+            // пока стеки не пустые те. не дошли до конца
+            while (stack1.Count + stack2.Count > 0)
+            {
+                // если 1 стек не пустой
+                if (stack1.Count > 0)
+                    // пока 1 стек не пуст
+                    while (stack1.Count > 0)
+                    {
+                        temp = stack1.Pop(); //  берем врехний элемент из стека 
+                        if (temp.Left != null) stack2.Push(temp.Left);   //  если у этого элмента есть левый потомок добовляем его во втрой стек
+                        if (temp.Right != null) stack2.Push(temp.Right); //  если у этого элмента есть правый потомок добовляем его во втрой стек
+                        t.AddElement(temp.X); // в новое древо добоялем элмент из 1го стека
+                    }
+                // если же первый стек пусто те нет потомков у элемента 
+                else
+                    // пока 2й стек не пустой (есть дочерние элменты )
+                    while (stack2.Count > 0)
+                    {
+                        temp = stack2.Pop(); // берем элмент из 2го стека
+                        if (temp.Left != null) stack1.Push(temp.Left);   //  если у этого элмента есть левый потомок добовляем его в первый стек
+                        if (temp.Right != null) stack1.Push(temp.Right); //  если у этого элмента есть правый потомок добовляем его в первый стек
+                        t.AddElement(temp.X);
+                    }
+            }
+            return t;
+        }
+
+
+        public bool check(TElement t1, TElement t2)
+        {
+            if (t1.X != t2.X || (t1.Left == null && t2.Left != null) || (t1.Left != null && t2.Left == null) || (t1.Right == null && t2.Right != null) || (t1.Right != null && t2.Right == null))
+            {
+                return false;
+            }
+            if (t1.Left == null && t1.Right == null && t2.Left == null && t2.Right == null)
+            {
+                return true;
+            }
+            if (t1.Left == null && t2.Left == null && t1.Right != null && t2.Right != null)
+            {
+                return check(t1.Right, t2.Right);
+            }
+            if (t1.Left != null && t2.Left != null && t1.Right == null && t2.Right == null)
+            {
+                return check(t1.Left, t2.Left);
+            }
+            return (check(t1.Left, t2.Left) && check(t1.Right, t2.Right));
+        }
+
+        public static Tree operator +(Tree t1, Tree t2)
+        {
+            return null;
+        }
+
+
+        void PrintR(TElement te)
+        {
+            if (te.Left != null) PrintR(te.Left);
+            Console.Write(te.X + " ");
+            if (te.Right != null) PrintR(te.Right);
+        }
+        public void Print()
+        {
+            Console.WriteLine("================");
+            PrintR(root);
+            Console.WriteLine();
+        }
+
+        public void PrintByLevel()
+        {
+            if (root == null)
+                return;
+
+            Queue<TElement> q = new Queue<TElement>();
+            q.Enqueue(root);
+
+            while (true)
+            {
+                int nodeCount = q.Count;
+                if (nodeCount == 0)
+                    break;
+
+                // Берем из очереди все узлы на текущем уровне
+                // и вставляем в очередь все узлы следующего уровня
+                while (nodeCount > 0)
+                {
+                    TElement node = q.Peek();
+                    Console.Write(node.X + " ");
+                    q.Dequeue();
+                    if (node.Left != null)
+                        q.Enqueue(node.Left);
+                    if (node.Right != null)
+                        q.Enqueue(node.Right);
+                    nodeCount--;
+                }
+                Console.WriteLine();
+            }
+        }
+    }
